@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <!-- Bootstrap and Jquery served from MaxCDN -->
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- Knockout served from CDN JS -->
+    <!-- Knockout library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+
+    <!-- Local stylesheets and js files -->
+    <link rel="stylesheet" type="text/css" href="site.css">
+
+    <script src="viewmodels/userviewmodel.js"></script>
+    <script src="viewmodels/donationviewmodel.js"></script>
+    <script src="site.js"></script>
+  </head>
+
+  <body>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <h3>Welcome</h3>
+        <div>Your name is <span data-bind="text: userFirstName"></span> <span data-bind="text: userLastName"></span></div>
+      </div>
+      <div class="col-sm-12">
+        <h3>Total Income</h3>
+        <div>$50,000</div>
+      </div>
+
+      <div class="col-sm-12">
+        <h3>My Pledge</h3>
+        <div>My Pledge is 10%</div>
+        <div>This year, I need to give $5,000.</div>
+        <div>So far, I've given $110.</div>
+        <div>I still need to give a total of $4890.</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-9">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <td>Organization Name</td>
+              <td>Donation Amount</td>
+              <td>Donation Date</td>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>The Make A Wish Foundation, Of Course</td>
+              <td>$100</td>
+              <td>1/2/2017</td>
+            </tr>
+            <tr>
+              <td>AMF</td>
+              <td>$10</td>
+              <td>1/1/2017</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </body>
+</html>

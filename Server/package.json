@@ -1,0 +1,26 @@
+{
+  "name": "cea_trial_api",
+  "version": "1.0.0",
+  "description": "a RESTful api for the cea trial task",
+  "main": "usersApi.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "placeholder"
+  },
+  "keywords": [
+    "cea"
+  ],
+  "author": "justis mills",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  },
+  "dependencies": {
+    "express": "^4.15.3",
+    "knex": "^0.13.0",
+    "mysql": "^2.14.0"
+  }
+}
