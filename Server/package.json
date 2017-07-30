@@ -21,6 +21,7 @@
   "dependencies": {
     "express": "^4.15.3",
     "knex": "^0.13.0",
-    "mysql": "^2.14.0"
+    "mysql": "^2.14.0",
+    "password-hash-and-salt": "^0.1.4"
   }
 }

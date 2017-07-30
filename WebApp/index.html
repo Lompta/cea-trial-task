@@ -17,8 +17,6 @@
     <!-- Local stylesheets and js files -->
     <link rel="stylesheet" type="text/css" href="site.css">
 
-    <script src="viewmodels/userviewmodel.js"></script>
-    <script src="viewmodels/donationviewmodel.js"></script>
     <script src="site.js"></script>
   </head>
 
@@ -27,24 +25,27 @@
     <div class="row">
       <div class="col-sm-12">
         <h3>Welcome</h3>
-        <div>Your name is <span data-bind="text: userFirstName"></span> <span data-bind="text: userLastName"></span></div>
+        <div>Your name is <span data-bind="text: UserFirstName"></span> <span data-bind="text: UserLastName"></span>.</div>
       </div>
       <div class="col-sm-12">
-        <h3>Total Income</h3>
-        <div>$50,000</div>
+        <h3>Income</h3>
+        <!-- TODO: format Income with comma in the aesthetically appropriate place. -->
+        <div>Your total income this year is <span data-bind="currency: Income"></span>.</div>
       </div>
 
       <div class="col-sm-12">
-        <h3>My Pledge</h3>
-        <div>My Pledge is 10%</div>
-        <div>This year, I need to give $5,000.</div>
-        <div>So far, I've given $110.</div>
-        <div>I still need to give a total of $4890.</div>
+        <h3>Your Pledge</h3>
+        <div>Your pledge is <span data-bind="text: PledgeAmount"></span>%.</div>
+        <div>This year, you need to give <span data-bind="currency: RequiredDonationAmount"></span>.</div>
+        <div>So far, you've given <span data-bind="currency: DonationsTotal"></span>.</div>
+        <div data-bind="if: DonationGoalMet">You've donated enough to fulfill your pledge this year!</div>
+        <div data-bind="if: !DonationGoalMet">You still need to donate <span data-bind="currency: DonationShortfall"></span> to fulfill your pledge this year.</div>
       </div>
     </div>
 
     <div class="row">
       <div class="col-sm-9">
+        <h3>Donations</h3>
         <table class="table table-striped">
           <thead>
             <tr>
@@ -54,16 +55,11 @@
             </tr>
           </thead>
 
-          <tbody>
+          <tbody data-bind="foreach: Donations">
             <tr>
-              <td>The Make A Wish Foundation, Of Course</td>
-              <td>$100</td>
-              <td>1/2/2017</td>
-            </tr>
-            <tr>
-              <td>AMF</td>
-              <td>$10</td>
-              <td>1/1/2017</td>
+              <td data-bind="text: DonationOrg"></td>
+              <td><span data-bind="currency: Amount"></span></td>
+              <td data-bind="text: DonatedDate"></td>
             </tr>
           </tbody>
         </table>
