@@ -1,26 +1,25 @@
 {
   "name": "cea_trial_api",
   "version": "1.0.0",
-  "description": "a RESTful api for the cea trial task",
+  "description": "an api for the RR 8 cea trial task",
   "main": "usersApi.js",
   "scripts": {
     "start": "nodemon server.js"
   },
   "repository": {
     "type": "git",
-    "url": "placeholder"
+    "url": "https://github.com/Lompta/cea-trial-task"
   },
   "keywords": [
     "cea"
   ],
-  "author": "justis mills",
+  "author": "Justis Mills",
   "license": "UNLICENSED",
   "devDependencies": {
     "nodemon": "^1.11.0"
   },
   "dependencies": {
     "express": "^4.15.3",
-    "knex": "^0.13.0",
     "mysql": "^2.14.0",
     "password-hash-and-salt": "^0.1.4"
   }
