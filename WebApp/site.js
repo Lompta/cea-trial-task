@@ -1,33 +1,40 @@
 $(document).ready(function(){
-  var viewModel = {};
+  var viewModel = {
+    DonationGoalMet: ko.observable(true),
+    DonationShortfall: ko.observable(0.00),
+    Donations: ko.observable([]),
+    DonationsTotal: ko.observable(0.00),
+    Income: ko.observable(0.00),
+    PledgeAmount: ko.observable(0.00),
+    RequiredDonationAmount: ko.observable(0.00),
+    UserFirstName: ko.observable(""),
+    UserId: ko.observable(0),
+    UserLastName: ko.observable(""),
+    Username: ko.observable("")
+  };
 
   // custom handler to add commas correctly to numeric fields
   ko.bindingHandlers.currency = {
-    init: function(element, valueAccessor)
+    update: function(element, valueAccessor)
     {
-      var value = valueAccessor();
-
       // helpful regex logic found on stackoverflow
+      var value = ko.unwrap(valueAccessor());
+      console.log(value);
+
       var formattedValue = "$" + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
       $(element).html(formattedValue);
     }
   }
 
-  // BEGIN stopgap measure pre-authentication:
-  // in order to view different users, put a query string consisting only of their UserId
-  // for example, to view the user with ID 2 on localhost port 8000, localhost:8000?2.
-  // with no query string, the page defaults to user id 1's information.
-  var location = window.location.href;
-  var userId = location.split("?")[1];
+  ko.applyBindings(viewModel);
 
-  if(userId = undefined)
-  {
-    userId = "1";
-  }
-  // END stopgap measure pre-authentication.
+  // start with peter singer by default
+  getUserData(1, viewModel);
 
-  getUserData(userId, viewModel);
+  $("#userSelect").on("change", function(){
+    getUserData($(this).val(), viewModel);
+  });
 });
 
 function getUserData(id, viewModel) {
@@ -39,29 +46,35 @@ function getUserData(id, viewModel) {
             // our request returns a list of matching users. we want the first, which should be the only user
             var responseObject = JSON.parse(xmlHttpRequest.responseText);
 
-            viewModel = responseObject;
+            // BEGIN set raw observables
+            viewModel.Donations(responseObject.Donations);
+            viewModel.Income(responseObject.Income);
+            viewModel.PledgeAmount(responseObject.PledgeAmount);
+            viewModel.UserFirstName(responseObject.UserFirstName);
+            viewModel.UserLastName(responseObject.UserLastName);
+            viewModel.UserId(responseObject.UserId);
+            viewModel.Username(responseObject.Username);
+            // END set raw observables
 
             // BEGIN generate computed properties
             var donationsTotalTemp = 0.0;
-            for (var i = 0; i < viewModel.Donations.length; i++)
+            for (var i = 0; i < viewModel.Donations().length; i++)
             {
-              donationsTotalTemp += viewModel.Donations[i].Amount;
+              donationsTotalTemp += viewModel.Donations()[i].Amount;
             }
 
-            viewModel.DonationsTotal = donationsTotalTemp;
+            viewModel.DonationsTotal(donationsTotalTemp);
 
             // divide by 100.0 rather than by 100 to convert to decimal and avoid a floor function division operation
-            viewModel.RequiredDonationAmount = (viewModel.Income * viewModel.PledgeAmount) / 100.0;
+            viewModel.RequiredDonationAmount((viewModel.Income() * viewModel.PledgeAmount()) / 100.0);
 
-            viewModel.DonationShortfall = viewModel.RequiredDonationAmount - viewModel.DonationsTotal;
+            viewModel.DonationShortfall(viewModel.RequiredDonationAmount() - viewModel.DonationsTotal());
 
-            viewModel.DonationGoalMet = viewModel.DonationShortfall <= 0;
+            viewModel.DonationGoalMet(viewModel.DonationShortfall() <= 0);
             // END generate computed properties
 
             console.log("here's the updated view model");
             console.log(viewModel);
-
-            ko.applyBindings(viewModel);
         };
   }
   xmlHttpRequest.open('GET', 'http://localhost:3000/getUserData?id=' + id, true);

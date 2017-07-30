@@ -1,20 +1,23 @@
-//require local utils
+// require local utils
 var utils = require('./utils');
+
+// require tests
+var tests = require('./tests');
 
 // express init code from codementor.io
 var express = require('express'),
   app = express(),
   port = process.env.PORT || 3000;
 
-  var mysql = require('mysql');
+var mysql = require('mysql');
 
-  // Set up connection.
-  var con = mysql.createConnection({
-    host: "localhost",
-    user: "cea_trial_user",
-    password: "Jalak8uWest",
-    database: "cea_trial_task"
-  });
+// Set up connection.
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "cea_trial_user",
+  password: "Jalak8uWest",
+  database: "cea_trial_task"
+});
 
 con.connect(function(err) {
   if (err) throw err;
@@ -22,7 +25,7 @@ con.connect(function(err) {
 });
 
 app.use(function (req, res, next){
-  // Website you wish to allow to connect
+  // Allow client side to connect
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
 
   next();
@@ -30,7 +33,7 @@ app.use(function (req, res, next){
 
 app.get('/getUserData', function(request, response){
   // query concatenated for readability
-  con.query('SELECT u.UserId, UserFirstName, UserLastName, Income, PledgeAmount from User u ' +
+  con.query('SELECT u.UserId, Username, UserFirstName, UserLastName, Income, PledgeAmount from User u ' +
              'JOIN UserIncome ui on u.UserId = ui.UserId ' +
              'JOIN UserPledge up on u.UserId = up.UserId ' +
              'WHERE ui.IsCurrent = 1 AND u.IsActive = 1 AND u.UserId = ' + request.query.id, function(error, results){
@@ -61,12 +64,17 @@ app.get('/getUserData', function(request, response){
              });
 });
 
+//Run tests
+var pwTest = tests.passwordTest();
+
 function getDonationData(userInfo, responseObject, callback)
 {
   con.query('SELECT Amount, DonatedDate, DonationOrg from UserDonation WHERE UserId = ' + userInfo.UserId, function(error, results){
       if ( error ){
-          // if something went wrong, do not return any donations.
-          return [];
+          // if something went wrong, do not return any donations, but do continue the process of returning other user data.
+          userInfo.Donations = [];
+
+          callback(userInfo, responseObject);
       } else {
           // convert to string to get rid of 'rowdatapacket' classification confusing json.parse
           var stringResults = JSON.stringify(results);

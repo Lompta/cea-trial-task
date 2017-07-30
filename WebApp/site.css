@@ -1,0 +1,21 @@
+body {
+  background-color: #ecece4
+}
+
+.container {
+  margin: 10px;
+}
+
+.userContainer {
+  margin-right: 10px;
+  margin-top: 30px;
+}
+
+#userSelect {
+  margin-right: 10px !important;
+}
+
+h3 {
+  color: #6c0000;
+  font-family: sans-serif;
+}

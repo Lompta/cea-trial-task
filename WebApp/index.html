@@ -21,50 +21,74 @@
   </head>
 
   <body>
-
     <div class="row">
-      <div class="col-sm-12">
-        <h3>Welcome</h3>
-        <div>Your name is <span data-bind="text: UserFirstName"></span> <span data-bind="text: UserLastName"></span>.</div>
-      </div>
-      <div class="col-sm-12">
-        <h3>Income</h3>
-        <!-- TODO: format Income with comma in the aesthetically appropriate place. -->
-        <div>Your total income this year is <span data-bind="currency: Income"></span>.</div>
-      </div>
-
-      <div class="col-sm-12">
-        <h3>Your Pledge</h3>
-        <div>Your pledge is <span data-bind="text: PledgeAmount"></span>%.</div>
-        <div>This year, you need to give <span data-bind="currency: RequiredDonationAmount"></span>.</div>
-        <div>So far, you've given <span data-bind="currency: DonationsTotal"></span>.</div>
-        <div data-bind="if: DonationGoalMet">You've donated enough to fulfill your pledge this year!</div>
-        <div data-bind="if: !DonationGoalMet">You still need to donate <span data-bind="currency: DonationShortfall"></span> to fulfill your pledge this year.</div>
-      </div>
-    </div>
-
-    <div class="row">
+      <!-- ALL USER AND DONATION INFORMATION -->
       <div class="col-sm-9">
-        <h3>Donations</h3>
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <td>Organization Name</td>
-              <td>Donation Amount</td>
-              <td>Donation Date</td>
-            </tr>
-          </thead>
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <h3>User Info</h3>
+              <div class="row">
+                <div class="col-sm-4">
+                  <label>Full Name</label>
+                  <div><span data-bind="text: UserFirstName"></span> <span data-bind="text: UserLastName"></span></div>
+                </div>
+                <div class="col-sm-4">
+                  <label>Username</label>
+                  <div><span data-bind="text: Username"></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <h3>Income</h3>
+              <div>Your total income this year is <span data-bind="currency: Income"></span>.</div>
+            </div>
 
-          <tbody data-bind="foreach: Donations">
-            <tr>
-              <td data-bind="text: DonationOrg"></td>
-              <td><span data-bind="currency: Amount"></span></td>
-              <td data-bind="text: DonatedDate"></td>
-            </tr>
-          </tbody>
-        </table>
+            <div class="col-sm-12">
+              <h3>Your Pledge</h3>
+              <div>Your pledge is <span data-bind="text: PledgeAmount"></span>%.</div>
+              <div>This year, you need to give <span data-bind="currency: RequiredDonationAmount"></span>.</div>
+              <br/>
+              <div>So far, you've given <span data-bind="currency: DonationsTotal"></span>.</div>
+              <div data-bind="if: DonationGoalMet">You've donated enough to fulfill your pledge this year!</div>
+              <div data-bind="if: DonationGoalMet() == false">You still need to donate <span data-bind="currency: DonationShortfall"></span> to fulfill your pledge this year.</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-9">
+              <h3>Donations</h3>
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <td>Organization Name</td>
+                    <td>Donation Amount</td>
+                    <td>Donation Date</td>
+                  </tr>
+                </thead>
+
+                <tbody data-bind="foreach: Donations">
+                  <tr>
+                    <td data-bind="text: DonationOrg"></td>
+                    <td><span data-bind="currency: Amount"></span></td>
+                    <td data-bind="text: DonatedDate"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- USER SELECTION PANEL -->
+      <div class="col-sm-3">
+        <div class="form-group userContainer">
+          <label for="userSelect">Select User:</label>
+          <select class="form-control" id="userSelect">
+            <option value="1">PSinger</option>
+            <option value="2">HurfmasterP</option>
+          </select>
+        </div>
       </div>
     </div>
-
   </body>
 </html>
