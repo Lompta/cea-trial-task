@@ -24,7 +24,7 @@
     <div class="row">
       <!-- ALL USER AND DONATION INFORMATION -->
       <div class="col-sm-9">
-        <div class="container">
+        <div class="container" data-bind="visible: IsUserSelected" style="display: none">
           <div class="row">
             <div class="col-sm-12">
               <h3>User Info</h3>
@@ -74,6 +74,11 @@
                     <td data-bind="text: DonatedDate"></td>
                   </tr>
                 </tbody>
+                <tfoot data-bind="visible: NoDonations" style="display: none;">
+                  <tr>
+                     <td class="text-center" colspan="3">You haven't made any donations yet this year.</td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </div>
@@ -84,8 +89,10 @@
         <div class="form-group userContainer">
           <label for="userSelect">Select User:</label>
           <select class="form-control" id="userSelect">
+            <option selected disabled>Select a user...</option>
             <option value="1">PSinger</option>
             <option value="2">HurfmasterP</option>
+            <option value="3">PTCruiser</option>
           </select>
         </div>
       </div>

@@ -66,7 +66,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `cea_trial_task`.`UserDonation` (
   `UserDonationId` INT NOT NULL,
-  `Amount` INT NULL,
+  `Amount` DECIMAL(10,2) NULL,
   `DonatedDate` DATE NULL,
   `UserId` INT NULL,
   `DonationOrg` VARCHAR(100) NULL,

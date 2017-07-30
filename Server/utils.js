@@ -7,7 +7,7 @@ module.exports.convertDate = function(rawDate)
   return refinedDate;
 };
 
-// this function was used to obtain the hashes for the database for each user's chosen raw password
+// this function is used to compute and log the hashes for the database for each user's chosen raw password
 module.exports.hashAndSalt = function(password)
 {
   console.log('attempting hash!');

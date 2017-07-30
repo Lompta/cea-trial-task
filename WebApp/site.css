@@ -15,6 +15,10 @@ body {
   margin-right: 10px !important;
 }
 
+thead {
+  color: #6c0000;
+}
+
 h3 {
   color: #6c0000;
   font-family: sans-serif;

@@ -10,18 +10,41 @@ $(document).ready(function(){
     UserFirstName: ko.observable(""),
     UserId: ko.observable(0),
     UserLastName: ko.observable(""),
-    Username: ko.observable("")
+    Username: ko.observable(""),
+    NoDonations: ko.observable(false),
+    IsUserSelected: ko.observable(false)
   };
 
-  // custom handler to add commas correctly to numeric fields
+  // custom handler to add commas, cents (when necessary), and dollar signs correctly to numeric fields
   ko.bindingHandlers.currency = {
     update: function(element, valueAccessor)
     {
-      // helpful regex logic found on stackoverflow
       var value = ko.unwrap(valueAccessor());
-      console.log(value);
 
+      // helpful regex logic found on stackoverflow to add commas
       var formattedValue = "$" + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+      // if we have a decimal point...
+      if (formattedValue.split('.').length == 2)
+      {
+        var splitValue = formattedValue.split('.');
+
+        var dollars = splitValue[0];
+        var cents = splitValue[1];
+
+        // if the cents length is one digit, we need to add a 0 - ie. 0.5 dollars is 50 cents.
+        if (cents.length == 1)
+        {
+          cents = cents + "0";
+        }
+        // if the cents length is more than two digits, we need to truncate.
+        else if (cents.length > 2)
+        {
+          cents = cents.substring(0, 2);
+        }
+
+        formattedValue = dollars + "." + cents;
+      }
 
       $(element).html(formattedValue);
     }
@@ -29,21 +52,17 @@ $(document).ready(function(){
 
   ko.applyBindings(viewModel);
 
-  // start with peter singer by default
-  getUserData(1, viewModel);
-
   $("#userSelect").on("change", function(){
     getUserData($(this).val(), viewModel);
   });
 });
 
 function getUserData(id, viewModel) {
-    console.log("attempting get user data");
     var xmlHttpRequest = new XMLHttpRequest();
 
     xmlHttpRequest.onreadystatechange = function() {
         if ( xmlHttpRequest.readyState == XMLHttpRequest.DONE && xmlHttpRequest.status == 200 ) {
-            // our request returns a list of matching users. we want the first, which should be the only user
+            // parse the response
             var responseObject = JSON.parse(xmlHttpRequest.responseText);
 
             // BEGIN set raw observables
@@ -71,26 +90,14 @@ function getUserData(id, viewModel) {
             viewModel.DonationShortfall(viewModel.RequiredDonationAmount() - viewModel.DonationsTotal());
 
             viewModel.DonationGoalMet(viewModel.DonationShortfall() <= 0);
+
+            viewModel.NoDonations(viewModel.Donations().length == 0);
             // END generate computed properties
 
-            console.log("here's the updated view model");
-            console.log(viewModel);
+            // show the panel for the selected user
+            viewModel.IsUserSelected(true);
         };
   }
   xmlHttpRequest.open('GET', 'http://localhost:3000/getUserData?id=' + id, true);
-  xmlHttpRequest.send();
-}
-
-// THIS ISN'T DRY AND WILL BE REPLACED WITH A COMPOSITE FUNCTION
-function getDonationsByUserId(id) {
-    console.log("attempting get donations");
-    var xmlHttpRequest = new XMLHttpRequest();
-
-    xmlHttpRequest.onreadystatechange = function() {
-        if ( xmlHttpRequest.readyState == XMLHttpRequest.DONE && xmlHttpRequest.status == 200 ) {
-            console.log(xmlHttpRequest.responseText);
-        };
-  }
-  xmlHttpRequest.open('GET', 'http://localhost:3000/getDonationsByUserId?id=' + id, true);
   xmlHttpRequest.send();
 }
