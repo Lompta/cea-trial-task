@@ -12,7 +12,8 @@ $(document).ready(function(){
     UserLastName: ko.observable(""),
     Username: ko.observable(""),
     NoDonations: ko.observable(false),
-    IsUserSelected: ko.observable(false)
+    IsUserSelected: ko.observable(false),
+    ShowValidationMessage: ko.observable(false)
   };
 
   // custom handler to add commas, cents (when necessary), and dollar signs correctly to numeric fields
@@ -52,12 +53,23 @@ $(document).ready(function(){
 
   ko.applyBindings(viewModel);
 
-  $("#userSelect").on("change", function(){
-    getUserData($(this).val(), viewModel);
+  $("#submitButton").on("click", function(){
+    var username = $("#username").val();
+    var password = $("#password").val();
+
+    getUserData(username, password, viewModel);
+  });
+
+  $("#changeUser").on("click", function(){
+    $("#username").val("");
+    $("#password").val("");
+
+    viewModel.IsUserSelected(false);
   });
 });
 
-function getUserData(id, viewModel) {
+// View model is passed in empty and updated with information from the server
+function getUserData(username, password, viewModel) {
     var xmlHttpRequest = new XMLHttpRequest();
 
     xmlHttpRequest.onreadystatechange = function() {
@@ -96,8 +108,17 @@ function getUserData(id, viewModel) {
 
             // show the panel for the selected user
             viewModel.IsUserSelected(true);
-        };
+
+            // hide validation message
+            viewModel.ShowValidationMessage(false);
+        }
+        else if(xmlHttpRequest.readyState == XMLHttpRequest.DONE && xmlHttpRequest.status == 403 ) {
+          viewModel.ShowValidationMessage(true);
+        }
   }
-  xmlHttpRequest.open('GET', 'http://localhost:3000/getUserData?id=' + id, true);
+  // NOTE: in general, it's very important to not send password through in a GET request as plaintext.
+  // I have done so here because time is short, in order to include login functionality.
+  // It would be a bad idea in production code. At the very least, this request should be switched to a POST.
+  xmlHttpRequest.open('GET', 'http://localhost:3000/getUserData?username=' + username + '&password=' + password, true);
   xmlHttpRequest.send();
 }

@@ -30,9 +30,11 @@ module.exports.passwordTest = function(){
 
   // test peter singer's password to verify system working properly
   // NOTE - would never use a real user's password in a test like this. Only doing it because P Singer is a dummy user here
-  var singerPassword = "ExpensiveSuit1";
 
-  con.query('SELECT PasswordHashed, Salt from User WHERE UserId = 1', function(error, results){
+  //var singerPassword = "ExpensiveSuit1";
+  var singerPassword = "Bl00d0fTheY0ung";
+
+  con.query('SELECT PasswordHashed, Salt from User WHERE UserId = 2', function(error, results){
        if ( error ){
          response.status(400).send('Error in database operation.');
        } else {

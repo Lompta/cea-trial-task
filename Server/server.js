@@ -32,39 +32,48 @@ app.use(function (req, res, next){
 });
 
 app.get('/getUserData', function(request, response){
-  // query concatenated for readability
-  con.query('SELECT u.UserId, Username, UserFirstName, UserLastName, Income, PledgeAmount from User u ' +
-             'JOIN UserIncome ui on u.UserId = ui.UserId ' +
-             'JOIN UserPledge up on u.UserId = up.UserId ' +
-             'WHERE ui.IsCurrent = 1 AND u.IsActive = 1 AND u.UserId = ' + request.query.id, function(error, results){
-               if ( error ){
-                   response.status(400).send('Error in database operation.');
-               } else {
-                   // convert to string to get rid of 'rowdatapacket' classification confusing json.parse
-                   var stringResults = JSON.stringify(results);
+  // verify username and password
+  validateUser(request.query.username, request.query.password, function(userId, validateSuccess)
+  {
+    if (!validateSuccess)
+    {
+      response.status(403).send('Incorrect username or password.');
+    }
+    else {
+      // query concatenated for readability
+      con.query('SELECT u.UserId, Username, UserFirstName, UserLastName, Income, PledgeAmount from User u ' +
+                 'JOIN UserIncome ui on u.UserId = ui.UserId ' +
+                 'JOIN UserPledge up on u.UserId = up.UserId ' +
+                 'WHERE ui.IsCurrent = 1 AND u.IsActive = 1 AND u.UserId = ' + userId, function(error, results){
+                   if ( error ){
+                       response.status(400).send('Error in database operation.');
+                   } else {
+                       // convert to string to get rid of 'rowdatapacket' classification confusing json.parse
+                       var stringResults = JSON.stringify(results);
 
-                   var jsonResults = JSON.parse(stringResults);
+                       var jsonResults = JSON.parse(stringResults);
 
-                   // if jsonResults is empty, some user data was missing.
-                   // POTENTIAL ISSUE: if a user does not have any active income records, this will filter them out.
-                   if(jsonResults.length == 0)
-                   {
-                     response.status(404).send('Active user not found.');
+                       // if jsonResults is empty, the user does not exist or is missing required data.
+                       if(jsonResults.length == 0)
+                       {
+                         response.status(404).send('Active user not found.');
+                       }
+
+                       var processedResults = jsonResults[0];
+
+                       // get donation data - once it's received, send the response.
+                       getDonationData(processedResults, response, function(userResultWithDonations, responseObject)
+                       {
+                         console.log(userResultWithDonations);
+                         responseObject.send(userResultWithDonations);
+                       });
                    }
-
-                   var processedResults = jsonResults[0];
-
-                   // get donation data - once it's received, send the response.
-                   getDonationData(processedResults, response, function(userResultWithDonations, responseObject)
-                   {
-                     console.log(userResultWithDonations);
-                     responseObject.send(userResultWithDonations);
-                   });
-               }
-             });
+                 });
+    }
+  });
 });
 
-//Run tests
+//Run tests - results are logged to the console.
 var pwTest = tests.passwordTest();
 
 function getDonationData(userInfo, responseObject, callback)
@@ -94,15 +103,38 @@ function getDonationData(userInfo, responseObject, callback)
   });
 }
 
-app.get('/getDonationsByUserId', function(request, response){
-  con.query('SELECT Amount, DonatedDate, DonationOrg from UserDonation WHERE UserId = ' + request.query.id, function(error, results){
-      if ( error ){
-          response.status(400).send('Error in database operation');
-      } else {
-          response.send(results);
+// function in progress to validate a user.
+function validateUser(username, password, callback)
+{
+  con.query('SELECT UserId, Username, PasswordHashed, Salt from User WHERE Username = "' + username + '"', function(error, results)
+  {
+    if (error)
+    {
+      callback("an error occured", false);
+    }
+    else {
+      // convert to string to get rid of 'rowdatapacket' classification confusing json.parse
+      var stringResults = JSON.stringify(results);
+      var processedUserResults = JSON.parse(stringResults);
+
+      if (processedUserResults.length == 0)
+      {
+        // no user ID match for username, so validation failed.
+        callback(0, false)
       }
+      else {
+        // this step requires assumption of unique usernames
+        var userData = processedUserResults[0];
+
+        utils.validatePassword(userData.UserId, password, userData.PasswordHashed, userData.Salt, function (userId, validateSuccess)
+        {
+          // pass the validation status and the relevant userId on.
+          callback(userId, validateSuccess);
+        });
+      }
+    }
   });
-});
+}
 
 app.listen(port, function(){
   console.log("Express server is listening on port " + port);

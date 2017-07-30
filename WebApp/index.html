@@ -47,7 +47,7 @@
             <div class="col-sm-12">
               <h3>Your Pledge</h3>
               <div>Your pledge is <span data-bind="text: PledgeAmount"></span>%.</div>
-              <div>This year, you need to give <span data-bind="currency: RequiredDonationAmount"></span>.</div>
+              <div>This year, you need to give <span data-bind="currency: RequiredDonationAmount"></span> to fulfill your pledge.</div>
               <br/>
               <div>So far, you've given <span data-bind="currency: DonationsTotal"></span>.</div>
               <div data-bind="if: DonationGoalMet">You've donated enough to fulfill your pledge this year!</div>
@@ -81,19 +81,24 @@
                 </tfoot>
               </table>
             </div>
-          </div>
+        </div>
+        <!--ENHANCEMENT RECOMMENDATION: Clear out form when this button is clicked, as well as hiding it.-->
+        <div class="pull-right">
+          <br />
+          <button id="changeUser" type="button" class="btn btn-default">Change User</button>
+        </div>
         </div>
       </div>
       <!-- USER SELECTION PANEL -->
       <div class="col-sm-3">
-        <div class="form-group userContainer">
-          <label for="userSelect">Select User:</label>
-          <select class="form-control" id="userSelect">
-            <option selected disabled>Select a user...</option>
-            <option value="1">PSinger</option>
-            <option value="2">HurfmasterP</option>
-            <option value="3">PTCruiser</option>
-          </select>
+        <!-- ENHANCEMENT RECOMMENDATION: Make hitting "enter" in the form also submit it. -->
+        <div class="form-group userContainer" data-bind="visible: !IsUserSelected()">
+          <div data-bind="visible: ShowValidationMessage" style="display: none; color: red;">Sorry, this username or password is incorrect.</div>
+          <label for="username">Username</label>
+          <input class="form-control" id="username">
+          <label for="password">Password</label>
+          <input class="form-control" type="password" id="password">
+          <button type="button" class="btn btn-primary pull-right" style="margin-top: 5px;" id="submitButton">Submit</button>
         </div>
       </div>
     </div>
